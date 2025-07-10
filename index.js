@@ -1,5 +1,5 @@
-// SillyTavern Plugin: Puppy Screenshot Pro - Ultimate Version
-// 全新架构设计，彻底解决所有问题
+// SillyTavern Plugin: Puppy Screenshot Pro - Smart UI Version
+// 智能界面系统 - 气泡/横条/完整面板三种状态
 
 (function() {
   'use strict';
@@ -12,7 +12,15 @@
     debug: true
   };
 
+  // 界面状态
+  const UI_STATES = {
+    FULL: 'full',      // 完整面板
+    MINIMIZED: 'minimized',  // 横条状态
+    BUBBLE: 'bubble'   // 气泡状态
+  };
+
   // 全局变量
+  let currentState = UI_STATES.FULL;
   let isPluginActive = false;
   let currentSettings = {
     format: 'png',
@@ -35,7 +43,7 @@
     }
   };
 
-  // 等待DOM加载
+  // 等待DOM元素
   function waitForElement(selector, timeout = 5000) {
     return new Promise((resolve, reject) => {
       const element = document.querySelector(selector);
@@ -59,7 +67,7 @@
 
       setTimeout(() => {
         observer.disconnect();
-        reject(new Error(`Element ${selector} not found within ${timeout}ms`));
+        reject(new Error(`Element ${selector} not found`));
       }, timeout);
     });
   }
@@ -86,73 +94,84 @@
     });
   }
 
-  // 创建快速入口按钮（右下角悬浮）
-  function createQuickAccessButton() {
-    const button = document.createElement('div');
-    button.id = 'puppy-quick-access';
-    button.innerHTML = `
-      <div class="puppy-quick-btn">
-        <span class="puppy-quick-icon">📸</span>
-        <span class="puppy-quick-text">Puppy</span>
-      </div>
-    `;
-    
-    // 添加点击事件
-    button.addEventListener('click', toggleMainPanel);
-    
-    document.body.appendChild(button);
-    logger.log('Quick access button created');
-  }
-
-  // 创建主面板
-  function createMainPanel() {
+  // 创建智能面板系统
+  function createSmartPanel() {
     const panel = document.createElement('div');
-    panel.id = 'puppy-main-panel';
+    panel.id = 'puppy-smart-panel';
+    panel.className = 'puppy-panel-full';
+    
     panel.innerHTML = `
-      <div class="puppy-panel-header">
-        <div class="puppy-panel-title">
-          <span class="puppy-logo">🐶</span>
-          <span>Puppy Screenshot Pro</span>
+      <!-- 完整面板状态 -->
+      <div class="puppy-panel-container puppy-state-full">
+        <div class="puppy-panel-header">
+          <div class="puppy-panel-title">
+            <span class="puppy-logo">🐶</span>
+            <span>Puppy Screenshot Pro</span>
+          </div>
+          <div class="puppy-panel-controls">
+            <button class="puppy-btn puppy-btn-control" onclick="changeState('${UI_STATES.MINIMIZED}')" title="收起">−</button>
+            <button class="puppy-btn puppy-btn-control" onclick="changeState('${UI_STATES.BUBBLE}')" title="变成气泡">×</button>
+          </div>
         </div>
-        <div class="puppy-panel-controls">
-          <button class="puppy-btn puppy-btn-minimize" onclick="minimizePanel()">−</button>
-          <button class="puppy-btn puppy-btn-close" onclick="closePanel()">×</button>
+        
+        <div class="puppy-panel-content">
+          <div class="puppy-section">
+            <h3>📸 快速截图</h3>
+            <div class="puppy-buttons">
+              <button class="puppy-btn puppy-btn-primary" onclick="takeFullScreenshot()">
+                <span>🖥️</span> 全屏截图
+              </button>
+              <button class="puppy-btn puppy-btn-primary" onclick="takeLastMessageScreenshot()">
+                <span>💬</span> 最新消息
+              </button>
+            </div>
+          </div>
+          
+          <div class="puppy-section">
+            <h3>🎨 美化选项</h3>
+            <div class="puppy-color-grid">
+              <div class="puppy-color-item" data-color="#FFFFFF" style="background:#FFFFFF" onclick="selectColor('#FFFFFF')"></div>
+              <div class="puppy-color-item" data-color="#F8F9FA" style="background:#F8F9FA" onclick="selectColor('#F8F9FA')"></div>
+              <div class="puppy-color-item" data-color="#E9ECEF" style="background:#E9ECEF" onclick="selectColor('#E9ECEF')"></div>
+              <div class="puppy-color-item" data-color="#DEE2E6" style="background:#DEE2E6" onclick="selectColor('#DEE2E6')"></div>
+              <div class="puppy-color-item" data-color="#CED4DA" style="background:#CED4DA" onclick="selectColor('#CED4DA')"></div>
+              <div class="puppy-color-item" data-color="#ADB5BD" style="background:#ADB5BD" onclick="selectColor('#ADB5BD')"></div>
+            </div>
+          </div>
+          
+          <div class="puppy-section">
+            <div class="puppy-buttons">
+              <button class="puppy-btn puppy-btn-secondary" onclick="openAdvancedSettings()">
+                ⚙️ 高级设置
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       
-      <div class="puppy-panel-content">
-        <div class="puppy-section">
-          <h3>快速截图</h3>
-          <div class="puppy-buttons">
-            <button class="puppy-btn puppy-btn-primary" onclick="takeFullScreenshot()">
-              <span class="puppy-btn-icon">🖥️</span>
-              全屏截图
-            </button>
-            <button class="puppy-btn puppy-btn-primary" onclick="takeLastMessageScreenshot()">
-              <span class="puppy-btn-icon">💬</span>
-              最新消息
-            </button>
+      <!-- 横条状态 -->
+      <div class="puppy-panel-container puppy-state-minimized" style="display: none;">
+        <div class="puppy-minimized-bar">
+          <div class="puppy-minimized-content">
+            <span class="puppy-logo">🐶</span>
+            <span class="puppy-minimized-title">Puppy</span>
+            <div class="puppy-minimized-actions">
+              <button class="puppy-btn-mini" onclick="takeFullScreenshot()" title="全屏截图">🖥️</button>
+              <button class="puppy-btn-mini" onclick="takeLastMessageScreenshot()" title="最新消息">💬</button>
+            </div>
+          </div>
+          <div class="puppy-minimized-controls">
+            <button class="puppy-btn-mini" onclick="changeState('${UI_STATES.FULL}')" title="展开">↑</button>
+            <button class="puppy-btn-mini" onclick="changeState('${UI_STATES.BUBBLE}')" title="变成气泡">×</button>
           </div>
         </div>
-        
-        <div class="puppy-section">
-          <h3>美化选项</h3>
-          <div class="puppy-color-grid">
-            <div class="puppy-color-item" data-color="#FFFFFF" style="background:#FFFFFF"></div>
-            <div class="puppy-color-item" data-color="#F8F9FA" style="background:#F8F9FA"></div>
-            <div class="puppy-color-item" data-color="#E9ECEF" style="background:#E9ECEF"></div>
-            <div class="puppy-color-item" data-color="#DEE2E6" style="background:#DEE2E6"></div>
-            <div class="puppy-color-item" data-color="#CED4DA" style="background:#CED4DA"></div>
-            <div class="puppy-color-item" data-color="#ADB5BD" style="background:#ADB5BD"></div>
-          </div>
-        </div>
-        
-        <div class="puppy-section">
-          <div class="puppy-buttons">
-            <button class="puppy-btn puppy-btn-secondary" onclick="openAdvancedSettings()">
-              ⚙️ 高级设置
-            </button>
-          </div>
+      </div>
+      
+      <!-- 气泡状态 -->
+      <div class="puppy-panel-container puppy-state-bubble" style="display: none;">
+        <div class="puppy-bubble" onclick="changeState('${UI_STATES.FULL}')" title="点击展开">
+          <span class="puppy-bubble-icon">🐶</span>
+          <div class="puppy-bubble-pulse"></div>
         </div>
       </div>
     `;
@@ -161,12 +180,43 @@
     makeDraggable(panel);
     
     document.body.appendChild(panel);
-    logger.log('Main panel created');
+    logger.log('Smart panel created');
   }
 
-  // 为每个消息添加相机图标
+  // 状态切换函数
+  function changeState(newState) {
+    const panel = document.getElementById('puppy-smart-panel');
+    if (!panel) return;
+
+    // 隐藏所有状态
+    panel.querySelectorAll('.puppy-panel-container').forEach(container => {
+      container.style.display = 'none';
+    });
+
+    // 显示新状态
+    const targetContainer = panel.querySelector(`.puppy-state-${newState}`);
+    if (targetContainer) {
+      targetContainer.style.display = 'block';
+      currentState = newState;
+      
+      // 更新面板样式类
+      panel.className = `puppy-panel-${newState}`;
+      
+      logger.log(`State changed to: ${newState}`);
+    }
+  }
+
+  // 检测是否为移动设备
+  function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+           window.innerWidth <= 768 || 
+           ('ontouchstart' in window);
+  }
+
+  // 增强的相机图标系统 - 移动端友好
   function addCameraIcons() {
     const messages = document.querySelectorAll('.mes');
+    const isMobile = isMobileDevice();
     
     messages.forEach((message, index) => {
       // 检查是否已经添加过图标
@@ -175,25 +225,93 @@
       }
       
       const cameraIcon = document.createElement('div');
-      cameraIcon.className = 'puppy-camera-icon';
-      cameraIcon.innerHTML = '📷';
-      cameraIcon.title = '截图此消息';
+      cameraIcon.className = `puppy-camera-icon ${isMobile ? 'mobile-visible' : ''}`;
+      cameraIcon.innerHTML = `
+        <div class="puppy-camera-button">
+          <span class="puppy-camera-symbol">📷</span>
+          <div class="puppy-camera-tooltip">截图此消息</div>
+        </div>
+      `;
       cameraIcon.setAttribute('data-message-index', index);
       
       // 添加点击事件
       cameraIcon.addEventListener('click', (e) => {
         e.stopPropagation();
+        e.preventDefault();
         screenshotMessage(message, index);
       });
       
-      // 将图标插入到消息中
-      const messageHeader = message.querySelector('.mes_header') || message.querySelector('.mes_text');
-      if (messageHeader) {
-        messageHeader.appendChild(cameraIcon);
+      // 移动端添加长按事件显示菜单
+      if (isMobile) {
+        let longPressTimer;
+        
+        cameraIcon.addEventListener('touchstart', (e) => {
+          longPressTimer = setTimeout(() => {
+            showMobileMenu(message, index, e.touches[0].clientX, e.touches[0].clientY);
+          }, 800);
+        });
+        
+        cameraIcon.addEventListener('touchend', () => {
+          clearTimeout(longPressTimer);
+        });
+        
+        cameraIcon.addEventListener('touchmove', () => {
+          clearTimeout(longPressTimer);
+        });
       }
+      
+      // 将图标插入到消息的右上角
+      message.style.position = 'relative';
+      message.appendChild(cameraIcon);
     });
     
-    logger.log(`Added camera icons to ${messages.length} messages`);
+    logger.log(`Added enhanced camera icons to ${messages.length} messages (Mobile: ${isMobile})`);
+  }
+
+  // 移动端菜单
+  function showMobileMenu(messageElement, index, x, y) {
+    // 移除已存在的菜单
+    const existingMenu = document.querySelector('.puppy-mobile-menu');
+    if (existingMenu) {
+      existingMenu.remove();
+    }
+    
+    const menu = document.createElement('div');
+    menu.className = 'puppy-mobile-menu';
+    menu.style.left = Math.min(x, window.innerWidth - 200) + 'px';
+    menu.style.top = Math.min(y, window.innerHeight - 100) + 'px';
+    
+    menu.innerHTML = `
+      <div class="puppy-mobile-menu-item" onclick="screenshotMessage(arguments[0], ${index}); closeMobileMenu();">
+        📷 截图此消息
+      </div>
+      <div class="puppy-mobile-menu-item" onclick="takeFullScreenshot(); closeMobileMenu();">
+        🖥️ 全屏截图
+      </div>
+      <div class="puppy-mobile-menu-item" onclick="closeMobileMenu();">
+        ❌ 取消
+      </div>
+    `;
+    
+    // 点击菜单外部关闭
+    const backdrop = document.createElement('div');
+    backdrop.className = 'puppy-mobile-menu-backdrop';
+    backdrop.onclick = closeMobileMenu;
+    
+    document.body.appendChild(backdrop);
+    document.body.appendChild(menu);
+    
+    // 保存消息元素引用
+    window.currentMobileMessage = messageElement;
+  }
+
+  // 关闭移动端菜单
+  function closeMobileMenu() {
+    const menu = document.querySelector('.puppy-mobile-menu');
+    const backdrop = document.querySelector('.puppy-mobile-menu-backdrop');
+    
+    if (menu) menu.remove();
+    if (backdrop) backdrop.remove();
   }
 
   // 截图指定消息
@@ -264,15 +382,32 @@
     await screenshotMessage(lastMessage, messages.length - 1);
   }
 
+  // 选择颜色
+  function selectColor(color) {
+    currentSettings.backgroundColor = color;
+    
+    // 更新选中状态
+    document.querySelectorAll('.puppy-color-item').forEach(item => {
+      item.classList.remove('selected');
+    });
+    
+    const selectedItem = document.querySelector(`[data-color="${color}"]`);
+    if (selectedItem) {
+      selectedItem.classList.add('selected');
+    }
+    
+    showNotification(`背景色已设置为 ${color}`, 'success');
+  }
+
   // 显示截图预览
   function showScreenshotPreview(canvas, filename) {
     const preview = document.createElement('div');
     preview.id = 'puppy-screenshot-preview';
     preview.innerHTML = `
-      <div class="puppy-preview-backdrop"></div>
+      <div class="puppy-preview-backdrop" onclick="closePreview()"></div>
       <div class="puppy-preview-container">
         <div class="puppy-preview-header">
-          <h3>截图预览</h3>
+          <h3>📸 截图预览</h3>
           <button class="puppy-btn puppy-btn-close" onclick="closePreview()">×</button>
         </div>
         <div class="puppy-preview-content">
@@ -283,11 +418,8 @@
             <button class="puppy-btn puppy-btn-primary" onclick="downloadScreenshot('${filename}')">
               📥 下载截图
             </button>
-            <button class="puppy-btn puppy-btn-secondary" onclick="enhanceScreenshot()">
-              ✨ 美化处理
-            </button>
             <button class="puppy-btn puppy-btn-secondary" onclick="closePreview()">
-              取消
+              关闭
             </button>
           </div>
         </div>
@@ -310,15 +442,15 @@
     logger.log('Screenshot preview shown');
   }
 
-  // 高级设置面板
+  // 高级设置
   function openAdvancedSettings() {
     const settings = document.createElement('div');
     settings.id = 'puppy-advanced-settings';
     settings.innerHTML = `
-      <div class="puppy-settings-backdrop"></div>
+      <div class="puppy-settings-backdrop" onclick="closeAdvancedSettings()"></div>
       <div class="puppy-settings-container">
         <div class="puppy-settings-header">
-          <h3>高级设置</h3>
+          <h3>⚙️ 高级设置</h3>
           <button class="puppy-btn puppy-btn-close" onclick="closeAdvancedSettings()">×</button>
         </div>
         <div class="puppy-settings-content">
@@ -365,10 +497,10 @@
         
         <div class="puppy-settings-actions">
           <button class="puppy-btn puppy-btn-primary" onclick="saveAdvancedSettings()">
-            保存设置
+            💾 保存设置
           </button>
           <button class="puppy-btn puppy-btn-secondary" onclick="resetAdvancedSettings()">
-            重置默认
+            🔄 重置默认
           </button>
         </div>
       </div>
@@ -415,13 +547,17 @@
     let isDragging = false;
     let startX, startY, initialX, initialY;
     
-    const header = element.querySelector('.puppy-panel-header');
-    if (!header) return;
-    
-    header.addEventListener('mousedown', startDrag);
-    header.addEventListener('touchstart', startDrag);
+    element.addEventListener('mousedown', startDrag);
+    element.addEventListener('touchstart', startDrag);
     
     function startDrag(e) {
+      // 只允许拖拽头部区域
+      if (!e.target.closest('.puppy-panel-header') && 
+          !e.target.closest('.puppy-minimized-bar') && 
+          !e.target.closest('.puppy-bubble')) {
+        return;
+      }
+      
       isDragging = true;
       
       const clientX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
@@ -465,6 +601,8 @@
       
       element.style.left = boundedX + 'px';
       element.style.top = boundedY + 'px';
+      element.style.right = 'auto';
+      element.style.bottom = 'auto';
     }
     
     function stopDrag() {
@@ -535,32 +673,13 @@
   }
 
   // 全局函数（供HTML调用）
-  window.toggleMainPanel = function() {
-    const panel = document.getElementById('puppy-main-panel');
-    if (panel) {
-      panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-    } else {
-      createMainPanel();
-    }
-  };
-
-  window.minimizePanel = function() {
-    const panel = document.getElementById('puppy-main-panel');
-    if (panel) {
-      panel.style.display = 'none';
-    }
-  };
-
-  window.closePanel = function() {
-    const panel = document.getElementById('puppy-main-panel');
-    if (panel) {
-      panel.remove();
-    }
-  };
-
+  window.changeState = changeState;
   window.takeFullScreenshot = takeFullScreenshot;
   window.takeLastMessageScreenshot = takeLastMessageScreenshot;
+  window.selectColor = selectColor;
   window.openAdvancedSettings = openAdvancedSettings;
+  window.screenshotMessage = screenshotMessage;
+  window.closeMobileMenu = closeMobileMenu;
 
   window.closePreview = function() {
     const preview = document.getElementById('puppy-screenshot-preview');
@@ -618,7 +737,7 @@
   // 初始化插件
   async function initializePlugin() {
     try {
-      logger.log('Initializing plugin...');
+      logger.log('Initializing smart UI plugin...');
       
       // 加载设置
       const savedSettings = localStorage.getItem('puppy-settings');
@@ -632,8 +751,8 @@
       // 等待页面加载完成
       await waitForElement('body');
       
-      // 创建快速入口按钮
-      createQuickAccessButton();
+      // 创建智能面板
+      createSmartPanel();
       
       // 监听页面变化，为新消息添加相机图标
       const observer = new MutationObserver((mutations) => {
@@ -662,7 +781,7 @@
       setTimeout(addCameraIcons, 1000);
       
       isPluginActive = true;
-      logger.log('Plugin initialized successfully');
+      logger.log('Smart UI plugin initialized successfully');
       showNotification('🐶 Puppy Screenshot Pro 已启动', 'success');
       
     } catch (error) {

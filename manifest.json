@@ -1,12 +1,14 @@
 {
-  "name": "puppy-screenshot",
-  "title": "Puppy Screenshot",
-  "description": "SillyTavern Puppy系列：支持自定义截图、滤镜、美化和导出功能。",
-  "version": "1.0.0",
-  "author": "puppy",
-  "entry": "puppy_screenshot.js",
-  "backend": [
-    "puppy_api.py",
-    "puppy_plugin.py"
-  ]
+  "display_name": "Puppy Screenshot Pro",
+  "loading_order": 5,
+  "requires": [],
+  "optional": [],
+  "js": "index.js",
+  "css": "style.css",
+  "author": "SillyTavern Community",
+  "version": "2.0.0",
+  "homePage": "https://github.com/sillytavern/puppy-screenshot-pro",
+  "description": "🐶 强大的截图插件，支持AI海报生成、高级美化和智能布局编辑。A powerful screenshot plugin with AI poster generation, advanced beautification, and smart layout editing.",
+  "auto_update": true,
+  "i18n": {}
 }

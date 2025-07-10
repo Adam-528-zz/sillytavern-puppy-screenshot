@@ -1,0 +1,39 @@
+{
+  "name": "puppy-screenshot-pro",
+  "version": "2.0.0",
+  "description": "🐶 强大的SillyTavern截图插件，支持AI海报生成、高级美化和智能布局编辑",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "sillytavern",
+    "plugin",
+    "screenshot",
+    "ai",
+    "image",
+    "chat",
+    "beautify",
+    "puppy"
+  ],
+  "author": "SillyTavern Community",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sillytavern/puppy-screenshot-pro.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sillytavern/puppy-screenshot-pro/issues"
+  },
+  "homepage": "https://github.com/sillytavern/puppy-screenshot-pro#readme",
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "sillytavern": {
+    "plugin": true,
+    "version": "1.10.0",
+    "compatibility": ">=1.10.0"
+  }
+}

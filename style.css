@@ -1,546 +1,524 @@
-/* Puppy Screenshot Pro - Complete Fix CSS */
+/* Puppy Screenshot Pro - Ultimate CSS */
 
+/* 基础变量 */
 :root {
   --puppy-primary: #FF6B9D;
   --puppy-secondary: #4ECDC4;
-  --puppy-success: #00B894;
-  --puppy-warning: #E17055;
-  --puppy-error: #D63031;
-  --puppy-white: #FFFFFF;
-  --puppy-neutral-100: #F8F9FA;
-  --puppy-neutral-200: #E9ECEF;
-  --puppy-neutral-700: #495057;
-  --puppy-neutral-800: #343A40;
-  --puppy-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --puppy-shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
-  --puppy-border-radius: 8px;
-  --puppy-border-radius-lg: 12px;
+  --puppy-accent: #45B7D1;
+  --puppy-success: #96CEB4;
+  --puppy-warning: #FFEAA7;
+  --puppy-error: #FD79A8;
+  --puppy-dark: #2D3436;
+  --puppy-light: #FFFFFF;
+  --puppy-gray: #636E72;
+  --puppy-bg: rgba(255, 255, 255, 0.95);
+  --puppy-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --puppy-radius: 12px;
+  --puppy-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --puppy-z-high: 10000;
+  --puppy-z-overlay: 10001;
+  --puppy-z-modal: 10002;
 }
 
-/* 基础浮动面板 */
-.puppy-floating-panel {
-  position: fixed !important;
-  background: var(--puppy-white) !important;
-  border: 1px solid var(--puppy-neutral-200) !important;
-  border-radius: var(--puppy-border-radius-lg) !important;
-  box-shadow: var(--puppy-shadow-lg) !important;
-  z-index: 2147483647 !important;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-  font-size: 14px !important;
-  overflow: hidden !important;
-  user-select: none !important;
-  -webkit-user-select: none !important;
-  -moz-user-select: none !important;
-  -ms-user-select: none !important;
-  max-height: 80vh !important;
-  min-width: 280px !important;
-  transition: all 0.2s ease !important;
+/* 快速入口按钮 - 右下角悬浮 */
+#puppy-quick-access {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: var(--puppy-z-high);
+  cursor: pointer;
+  transition: var(--puppy-transition);
 }
 
-.puppy-floating-panel.puppy-mobile {
-  max-height: 70vh !important;
+.puppy-quick-btn {
+  background: linear-gradient(135deg, var(--puppy-primary), var(--puppy-accent));
+  color: white;
+  border-radius: 50px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--puppy-shadow);
+  transition: var(--puppy-transition);
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  outline: none;
 }
 
-/* 面板头部 */
+.puppy-quick-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+.puppy-quick-btn:active {
+  transform: translateY(0);
+}
+
+.puppy-quick-icon {
+  font-size: 18px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* 主面板 */
+#puppy-main-panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 320px;
+  background: var(--puppy-bg);
+  border-radius: var(--puppy-radius);
+  box-shadow: var(--puppy-shadow);
+  z-index: var(--puppy-z-high);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  transition: var(--puppy-transition);
+}
+
 .puppy-panel-header {
-  background: linear-gradient(135deg, var(--puppy-primary), var(--puppy-secondary)) !important;
-  color: var(--puppy-white) !important;
-  padding: 12px 16px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  cursor: grab !important;
-  user-select: none !important;
-  -webkit-user-select: none !important;
-  -moz-user-select: none !important;
-  -ms-user-select: none !important;
-  touch-action: none !important;
-  min-height: 44px !important;
-}
-
-.puppy-panel-header:active {
-  cursor: grabbing !important;
-}
-
-.puppy-mobile .puppy-panel-header {
-  min-height: 52px !important;
-  padding: 16px 20px !important;
+  background: linear-gradient(135deg, var(--puppy-primary), var(--puppy-accent));
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: move;
+  user-select: none;
 }
 
 .puppy-panel-title {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  flex: 1 !important;
-  pointer-events: none !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 16px;
 }
 
-.puppy-icon {
-  font-size: 18px !important;
-  line-height: 1 !important;
+.puppy-logo {
+  font-size: 20px;
+  animation: bounce 2s infinite;
 }
 
-.puppy-mobile .puppy-icon {
-  font-size: 20px !important;
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-4px); }
+  60% { transform: translateY(-2px); }
 }
 
-.puppy-title {
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  margin: 0 !important;
-  line-height: 1.2 !important;
+.puppy-panel-controls {
+  display: flex;
+  gap: 5px;
 }
 
-.puppy-mobile .puppy-title {
-  font-size: 16px !important;
-}
-
-.puppy-header-controls {
-  display: flex !important;
-  gap: 8px !important;
-  align-items: center !important;
-}
-
-.puppy-minimize-btn, .puppy-close-btn {
-  background: rgba(255, 255, 255, 0.15) !important;
-  border: none !important;
-  color: var(--puppy-white) !important;
-  width: 28px !important;
-  height: 28px !important;
-  border-radius: 4px !important;
-  cursor: pointer !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: 14px !important;
-  font-weight: bold !important;
-  line-height: 1 !important;
-  transition: all 0.15s ease !important;
-  -webkit-tap-highlight-color: transparent !important;
-  touch-action: manipulation !important;
-}
-
-.puppy-mobile .puppy-minimize-btn,
-.puppy-mobile .puppy-close-btn {
-  width: 36px !important;
-  height: 36px !important;
-  font-size: 16px !important;
-}
-
-.puppy-minimize-btn:hover, .puppy-close-btn:hover {
-  background: rgba(255, 255, 255, 0.25) !important;
-}
-
-.puppy-minimize-btn:active, .puppy-close-btn:active {
-  background: rgba(255, 255, 255, 0.35) !important;
-  transform: scale(0.95) !important;
-}
-
-/* 面板内容 */
 .puppy-panel-content {
-  padding: 16px !important;
-  background: var(--puppy-white) !important;
-  overflow-y: auto !important;
-  max-height: calc(80vh - 60px) !important;
-  -webkit-overflow-scrolling: touch !important;
-}
-
-.puppy-mobile .puppy-panel-content {
-  padding: 16px 20px !important;
-  max-height: calc(70vh - 70px) !important;
-}
-
-.puppy-section {
-  margin-bottom: 16px !important;
-}
-
-.puppy-section:last-child {
-  margin-bottom: 0 !important;
-}
-
-.puppy-section h4 {
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  color: var(--puppy-neutral-700) !important;
-  margin: 0 0 8px 0 !important;
-  padding: 0 !important;
-}
-
-.puppy-mobile .puppy-section h4 {
-  font-size: 14px !important;
+  padding: 20px;
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
 /* 按钮样式 */
-.puppy-button-grid {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 8px !important;
-}
-
-.puppy-mobile .puppy-button-grid {
-  gap: 12px !important;
-}
-
 .puppy-btn {
-  padding: 10px 12px !important;
-  border: none !important;
-  border-radius: var(--puppy-border-radius) !important;
-  font-size: 12px !important;
-  font-weight: 500 !important;
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  text-align: center !important;
-  min-height: 36px !important;
-  white-space: nowrap !important;
-  -webkit-tap-highlight-color: transparent !important;
-  touch-action: manipulation !important;
-}
-
-.puppy-mobile .puppy-btn {
-  padding: 12px 16px !important;
-  font-size: 13px !important;
-  min-height: 44px !important;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--puppy-transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  outline: none;
+  background: none;
 }
 
 .puppy-btn-primary {
-  background: var(--puppy-primary) !important;
-  color: var(--puppy-white) !important;
+  background: linear-gradient(135deg, var(--puppy-primary), var(--puppy-accent));
+  color: white;
 }
 
 .puppy-btn-primary:hover {
-  background: #E55A8A !important;
-}
-
-.puppy-btn-primary:active {
-  background: #D14B7A !important;
-  transform: scale(0.98) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3);
 }
 
 .puppy-btn-secondary {
-  background: var(--puppy-secondary) !important;
-  color: var(--puppy-white) !important;
+  background: rgba(99, 110, 114, 0.1);
+  color: var(--puppy-gray);
+  border: 1px solid rgba(99, 110, 114, 0.2);
 }
 
 .puppy-btn-secondary:hover {
-  background: #3BA69F !important;
+  background: rgba(99, 110, 114, 0.2);
 }
 
-.puppy-btn-secondary:active {
-  background: #2E8B85 !important;
-  transform: scale(0.98) !important;
+.puppy-btn-close {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 50%;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
 }
 
-.puppy-btn-success {
-  background: var(--puppy-success) !important;
-  color: var(--puppy-white) !important;
+.puppy-btn-close:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
-.puppy-btn-success:hover {
-  background: #00A085 !important;
+.puppy-btn-minimize {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 50%;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 1;
 }
 
-.puppy-btn-success:active {
-  background: #008F76 !important;
-  transform: scale(0.98) !important;
+.puppy-btn-minimize:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
-.puppy-btn-warning {
-  background: var(--puppy-warning) !important;
-  color: var(--puppy-white) !important;
+/* 部分样式 */
+.puppy-section {
+  margin-bottom: 20px;
 }
 
-.puppy-btn-warning:hover {
-  background: #D65A44 !important;
+.puppy-section:last-child {
+  margin-bottom: 0;
 }
 
-.puppy-btn-warning:active {
-  background: #C14A34 !important;
-  transform: scale(0.98) !important;
+.puppy-section h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--puppy-dark);
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.puppy-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 /* 颜色选择器 */
 .puppy-color-grid {
-  display: grid !important;
-  grid-template-columns: repeat(6, 1fr) !important;
-  gap: 8px !important;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  margin-top: 10px;
 }
 
-.puppy-mobile .puppy-color-grid {
-  gap: 10px !important;
+.puppy-color-item {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: var(--puppy-transition);
+  border: 2px solid transparent;
+  position: relative;
 }
 
-.puppy-color-btn {
-  width: 32px !important;
-  height: 32px !important;
-  border: 2px solid transparent !important;
-  border-radius: 50% !important;
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
-  -webkit-tap-highlight-color: transparent !important;
-  touch-action: manipulation !important;
+.puppy-color-item:hover {
+  transform: scale(1.1);
+  border-color: var(--puppy-primary);
 }
 
-.puppy-mobile .puppy-color-btn {
-  width: 36px !important;
-  height: 36px !important;
+.puppy-color-item.selected {
+  border-color: var(--puppy-primary);
+  box-shadow: 0 0 0 2px rgba(255, 107, 157, 0.3);
 }
 
-.puppy-color-btn.active {
-  border-color: var(--puppy-neutral-800) !important;
-  transform: scale(1.1) !important;
+/* 消息中的相机图标 */
+.puppy-camera-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  background: rgba(255, 107, 157, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+  transition: var(--puppy-transition);
+  z-index: 1000;
+  opacity: 0;
+  transform: scale(0.8);
 }
 
-.puppy-color-btn:hover {
-  transform: scale(1.05) !important;
+.mes:hover .puppy-camera-icon {
+  opacity: 1;
+  transform: scale(1);
 }
 
-.puppy-color-btn:active {
-  transform: scale(0.95) !important;
+.puppy-camera-icon:hover {
+  background: var(--puppy-primary);
+  transform: scale(1.1);
 }
 
-/* 预览面板 */
-.puppy-preview-panel {
-  position: fixed !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  width: 90vw !important;
-  max-width: 800px !important;
-  max-height: 85vh !important;
-  background: var(--puppy-white) !important;
-  border-radius: var(--puppy-border-radius-lg) !important;
-  box-shadow: var(--puppy-shadow-lg) !important;
-  z-index: 2147483647 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  overflow: hidden !important;
+/* 截图预览 */
+#puppy-screenshot-preview {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--puppy-z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.puppy-preview-panel.puppy-mobile {
-  width: 95vw !important;
-  max-width: 95vw !important;
-  max-height: 80vh !important;
+.puppy-preview-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+}
+
+.puppy-preview-container {
+  position: relative;
+  background: white;
+  border-radius: var(--puppy-radius);
+  overflow: hidden;
+  max-width: 90vw;
+  max-height: 90vh;
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
 }
 
 .puppy-preview-header {
-  background: var(--puppy-neutral-100) !important;
-  padding: 16px 20px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  border-bottom: 1px solid var(--puppy-neutral-200) !important;
-  flex-shrink: 0 !important;
+  background: linear-gradient(135deg, var(--puppy-primary), var(--puppy-accent));
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .puppy-preview-header h3 {
-  margin: 0 !important;
-  font-size: 16px !important;
-  font-weight: 600 !important;
-  color: var(--puppy-neutral-800) !important;
-}
-
-.puppy-mobile .puppy-preview-header h3 {
-  font-size: 18px !important;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .puppy-preview-content {
-  padding: 20px !important;
-  flex: 1 !important;
-  overflow-y: auto !important;
-  display: flex !important;
-  flex-direction: column !important;
-  -webkit-overflow-scrolling: touch !important;
-}
-
-.puppy-mobile .puppy-preview-content {
-  padding: 16px 20px !important;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .puppy-preview-image {
-  flex: 1 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  margin-bottom: 16px !important;
-  text-align: center !important;
-  overflow: auto !important;
+  text-align: center;
+  max-height: 60vh;
+  overflow: auto;
 }
 
-.puppy-preview-image img {
-  max-width: 100% !important;
-  max-height: 60vh !important;
-  height: auto !important;
-  border: 1px solid var(--puppy-neutral-200) !important;
-  border-radius: var(--puppy-border-radius) !important;
+.puppy-preview-image canvas {
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-.puppy-mobile .puppy-preview-image img {
-  max-height: 45vh !important;
+.puppy-preview-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
-.puppy-preview-controls {
-  display: flex !important;
-  gap: 12px !important;
-  justify-content: center !important;
-  flex-shrink: 0 !important;
+/* 高级设置 */
+#puppy-advanced-settings {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--puppy-z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.puppy-mobile .puppy-preview-controls {
-  flex-direction: column !important;
+.puppy-settings-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
 }
 
-/* 高级设置面板 */
-.puppy-advanced-panel {
-  position: fixed !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  width: 90vw !important;
-  max-width: 500px !important;
-  max-height: 80vh !important;
-  background: var(--puppy-white) !important;
-  border-radius: var(--puppy-border-radius-lg) !important;
-  box-shadow: var(--puppy-shadow-lg) !important;
-  z-index: 2147483647 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  overflow: hidden !important;
+.puppy-settings-container {
+  position: relative;
+  background: white;
+  border-radius: var(--puppy-radius);
+  overflow: hidden;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
 }
 
-.puppy-advanced-panel.puppy-mobile {
-  width: 95vw !important;
-  max-width: 95vw !important;
+.puppy-settings-header {
+  background: linear-gradient(135deg, var(--puppy-primary), var(--puppy-accent));
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.puppy-advanced-header {
-  background: var(--puppy-neutral-100) !important;
-  padding: 16px 20px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  border-bottom: 1px solid var(--puppy-neutral-200) !important;
-  flex-shrink: 0 !important;
+.puppy-settings-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
 }
 
-.puppy-advanced-header h3 {
-  margin: 0 !important;
-  font-size: 16px !important;
-  font-weight: 600 !important;
-  color: var(--puppy-neutral-800) !important;
-}
-
-.puppy-advanced-content {
-  padding: 20px !important;
-  flex: 1 !important;
-  overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch !important;
-}
-
-.puppy-mobile .puppy-advanced-content {
-  padding: 16px 20px !important;
+.puppy-settings-content {
+  padding: 20px;
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
 .puppy-setting-group {
-  margin-bottom: 16px !important;
+  margin-bottom: 20px;
 }
 
 .puppy-setting-group label {
-  display: block !important;
-  font-size: 14px !important;
-  font-weight: 500 !important;
-  color: var(--puppy-neutral-700) !important;
-  margin-bottom: 8px !important;
+  display: block;
+  font-weight: 600;
+  color: var(--puppy-dark);
+  margin-bottom: 8px;
 }
 
-.puppy-setting-group select,
-.puppy-setting-group input[type="range"] {
-  width: 100% !important;
-  padding: 8px 12px !important;
-  border: 1px solid var(--puppy-neutral-200) !important;
-  border-radius: var(--puppy-border-radius) !important;
-  font-size: 14px !important;
-  margin-bottom: 4px !important;
+.puppy-setting-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid rgba(99, 110, 114, 0.3);
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  outline: none;
+  transition: var(--puppy-transition);
 }
 
-.puppy-setting-group input[type="range"] {
-  -webkit-appearance: none !important;
-  appearance: none !important;
-  height: 6px !important;
-  background: var(--puppy-neutral-200) !important;
-  padding: 0 !important;
+.puppy-setting-group select:focus {
+  border-color: var(--puppy-primary);
+  box-shadow: 0 0 0 2px rgba(255, 107, 157, 0.2);
 }
 
-.puppy-setting-group input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none !important;
-  appearance: none !important;
-  width: 18px !important;
-  height: 18px !important;
-  background: var(--puppy-primary) !important;
-  border-radius: 50% !important;
-  cursor: pointer !important;
+.puppy-slider-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.puppy-slider-container input[type="range"] {
+  flex: 1;
+  height: 6px;
+  background: rgba(99, 110, 114, 0.2);
+  border-radius: 3px;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.puppy-slider-container input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--puppy-primary);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: var(--puppy-transition);
+}
+
+.puppy-slider-container input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.puppy-slider-container span {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--puppy-gray);
+  min-width: 40px;
 }
 
 .puppy-setting-group input[type="checkbox"] {
-  width: 16px !important;
-  height: 16px !important;
-  margin-right: 8px !important;
+  margin-right: 8px;
+  transform: scale(1.2);
 }
 
-.puppy-advanced-controls {
-  display: flex !important;
-  gap: 12px !important;
-  justify-content: center !important;
-  margin-top: 20px !important;
+.puppy-settings-actions {
+  padding: 20px;
+  border-top: 1px solid rgba(99, 110, 114, 0.2);
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
 }
 
-.puppy-mobile .puppy-advanced-controls {
-  flex-direction: column !important;
+/* 进度指示器 */
+#puppy-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--puppy-z-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* 进度覆盖层 */
-.puppy-progress-overlay {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  background: rgba(0, 0, 0, 0.5) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  z-index: 2147483647 !important;
+.puppy-progress-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(3px);
 }
 
-.puppy-progress-content {
-  background: var(--puppy-white) !important;
-  padding: 32px !important;
-  border-radius: var(--puppy-border-radius-lg) !important;
-  text-align: center !important;
-  max-width: 300px !important;
-  margin: 0 20px !important;
+.puppy-progress-container {
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: var(--puppy-radius);
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
-.puppy-mobile .puppy-progress-content {
-  padding: 40px !important;
-}
-
-.puppy-spinner {
-  width: 40px !important;
-  height: 40px !important;
-  border: 4px solid var(--puppy-neutral-200) !important;
-  border-top: 4px solid var(--puppy-primary) !important;
-  border-radius: 50% !important;
-  animation: spin 1s linear infinite !important;
-  margin: 0 auto 16px !important;
-}
-
-.puppy-mobile .puppy-spinner {
-  width: 50px !important;
-  height: 50px !important;
-  border-width: 5px !important;
+.puppy-progress-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 107, 157, 0.2);
+  border-top: 4px solid var(--puppy-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 15px;
 }
 
 @keyframes spin {
@@ -548,39 +526,24 @@
   100% { transform: rotate(360deg); }
 }
 
+.puppy-progress-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--puppy-dark);
+}
+
 /* 通知 */
 .puppy-notification {
-  position: fixed !important;
-  top: 20px !important;
-  right: 20px !important;
-  padding: 12px 16px !important;
-  border-radius: var(--puppy-border-radius) !important;
-  color: var(--puppy-white) !important;
-  font-size: 14px !important;
-  font-weight: 500 !important;
-  z-index: 2147483647 !important;
-  animation: slideIn 0.3s ease-out !important;
-  max-width: 300px !important;
-  box-shadow: var(--puppy-shadow) !important;
-}
-
-.puppy-notification.puppy-mobile {
-  top: 80px !important;
-  left: 20px !important;
-  right: 20px !important;
-  max-width: none !important;
-}
-
-.puppy-notification-success {
-  background: var(--puppy-success) !important;
-}
-
-.puppy-notification-error {
-  background: var(--puppy-error) !important;
-}
-
-.puppy-notification-warning {
-  background: var(--puppy-warning) !important;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 15px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: var(--puppy-z-overlay);
+  box-shadow: var(--puppy-shadow);
+  animation: slideIn 0.3s ease-out;
 }
 
 @keyframes slideIn {
@@ -594,47 +557,86 @@
   }
 }
 
-/* 滚动条 */
-.puppy-panel-content::-webkit-scrollbar,
-.puppy-preview-content::-webkit-scrollbar,
-.puppy-advanced-content::-webkit-scrollbar {
-  width: 6px !important;
+.puppy-notification-success {
+  background: var(--puppy-success);
+  color: white;
 }
 
-.puppy-panel-content::-webkit-scrollbar-track,
-.puppy-preview-content::-webkit-scrollbar-track,
-.puppy-advanced-content::-webkit-scrollbar-track {
-  background: var(--puppy-neutral-100) !important;
+.puppy-notification-error {
+  background: var(--puppy-error);
+  color: white;
 }
 
-.puppy-panel-content::-webkit-scrollbar-thumb,
-.puppy-preview-content::-webkit-scrollbar-thumb,
-.puppy-advanced-content::-webkit-scrollbar-thumb {
-  background: var(--puppy-neutral-200) !important;
-  border-radius: 3px !important;
+.puppy-notification-warning {
+  background: var(--puppy-warning);
+  color: var(--puppy-dark);
 }
 
-/* 移动端媒体查询 */
+.puppy-notification-info {
+  background: var(--puppy-accent);
+  color: white;
+}
+
+/* 响应式设计 */
 @media (max-width: 768px) {
-  .puppy-floating-panel {
-    width: calc(100vw - 40px) !important;
-    max-width: calc(100vw - 40px) !important;
+  #puppy-main-panel {
+    width: 95%;
+    right: 2.5%;
+    top: 10px;
   }
   
-  .puppy-preview-panel,
-  .puppy-advanced-panel {
-    width: calc(100vw - 20px) !important;
-    max-width: calc(100vw - 20px) !important;
+  .puppy-quick-btn {
+    padding: 10px 16px;
+    font-size: 12px;
+  }
+  
+  .puppy-quick-icon {
+    font-size: 16px;
+  }
+  
+  .puppy-preview-container,
+  .puppy-settings-container {
+    width: 95%;
+    margin: 20px auto;
+  }
+  
+  .puppy-buttons {
+    flex-direction: column;
+  }
+  
+  .puppy-btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 
-/* 触摸设备优化 */
-@media (hover: none) and (pointer: coarse) {
-  .puppy-btn:hover,
-  .puppy-color-btn:hover,
-  .puppy-minimize-btn:hover,
-  .puppy-close-btn:hover {
-    background: initial !important;
-    transform: none !important;
+/* 移动端优化 */
+@media (max-width: 480px) {
+  #puppy-quick-access {
+    bottom: 15px;
+    right: 15px;
+  }
+  
+  .puppy-quick-text {
+    display: none;
+  }
+  
+  .puppy-quick-btn {
+    padding: 12px;
+    border-radius: 50%;
+  }
+  
+  .puppy-panel-content {
+    padding: 15px;
+  }
+  
+  .puppy-color-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .puppy-camera-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
   }
 }

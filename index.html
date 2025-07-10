@@ -1,0 +1,555 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐶 Puppy截图助手</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #FFE4E1, #FFF8DC, #E6E6FA);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 背景puppy图案 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(255, 182, 193, 0.1) 20px, transparent 20px),
+                radial-gradient(circle at 80% 80%, rgba(255, 218, 185, 0.1) 15px, transparent 15px);
+            background-size: 100px 100px, 150px 150px;
+            animation: float 20s infinite linear;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0% { background-position: 0% 0%, 0% 0%; }
+            100% { background-position: 100% 100%, -100% 100%; }
+        }
+
+        .main-content {
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #FF69B4;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .puppy-emoji {
+            font-size: 1.5em;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        /* 浮窗按钮 */
+        .floating-button {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #FF69B4, #FFB6C1);
+            border: none;
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(255, 105, 180, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            animation: pulse 3s infinite;
+        }
+
+        .floating-button:hover {
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 12px 35px rgba(255, 105, 180, 0.6);
+        }
+
+        .floating-button span {
+            font-size: 24px;
+            color: white;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 8px 25px rgba(255, 105, 180, 0.4); }
+            50% { box-shadow: 0 8px 25px rgba(255, 105, 180, 0.8); }
+            100% { box-shadow: 0 8px 25px rgba(255, 105, 180, 0.4); }
+        }
+
+        /* 浮窗面板 */
+        .floating-panel {
+            position: fixed;
+            right: 120px;
+            top: 50%;
+            transform: translateY(-50%) translateX(400px);
+            background: linear-gradient(135deg, #FFFFFF, #FFF8DC);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            width: 350px;
+            z-index: 999;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border: 3px solid #FFB6C1;
+        }
+
+        .floating-panel.active {
+            transform: translateY(-50%) translateX(0);
+        }
+
+        .panel-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed #FFB6C1;
+        }
+
+        .panel-title {
+            color: #FF69B4;
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .panel-subtitle {
+            color: #8B4513;
+            font-size: 0.9em;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            color: #FF1493;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .puppy-btn {
+            background: linear-gradient(135deg, #FF69B4, #FF1493);
+            border: none;
+            border-radius: 15px;
+            padding: 12px 20px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .puppy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 105, 180, 0.4);
+        }
+
+        .puppy-btn:active {
+            transform: translateY(0);
+        }
+
+        .puppy-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .puppy-btn:hover::before {
+            left: 100%;
+        }
+
+        .style-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .option-card {
+            background: linear-gradient(135deg, #FFE4E1, #FFEFD5);
+            border: 2px solid #FFB6C1;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .option-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.4);
+        }
+
+        .option-card.selected {
+            border-color: #FF69B4;
+            background: linear-gradient(135deg, #FFB6C1, #FF69B4);
+            color: white;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #FF69B4;
+        }
+
+        .demo-area {
+            background: white;
+            border: 2px dashed #FFB6C1;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .demo-content {
+            text-align: center;
+        }
+
+        .puppy-art {
+            font-size: 3em;
+            margin: 20px 0;
+        }
+
+        .status-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #98FB98, #90EE90);
+            color: #006400;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1001;
+        }
+
+        .status-message.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <h1><span class="puppy-emoji">🐶</span> Puppy截图助手 <span class="puppy-emoji">🐾</span></h1>
+        <p style="color: #8B4513; font-size: 1.2em; margin-bottom: 30px;">
+            可爱的小狗助手帮你制作精美截图！
+        </p>
+
+        <div class="demo-area" id="demo-area">
+            <div class="demo-content">
+                <div class="puppy-art">🐕‍🦺</div>
+                <h2 style="color: #FF69B4;">欢迎使用Puppy截图工具</h2>
+                <p style="color: #8B4513; margin: 15px 0;">
+                    点击右侧的粉色按钮开始使用截图功能
+                </p>
+                <div style="margin: 20px 0;">
+                    <span style="font-size: 1.5em;">🦴 🎾 🐾 🏠 ❤️</span>
+                </div>
+                <p style="color: #666; font-style: italic;">
+                    "汪汪！让我们一起创造美丽的截图吧！"
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 浮窗按钮 -->
+    <button class="floating-button" id="screenshot-btn" title="打开截图工具">
+        <span>📸</span>
+    </button>
+
+    <!-- 浮窗面板 -->
+    <div class="floating-panel" id="screenshot-panel">
+        <button class="close-btn" id="close-panel">×</button>
+        
+        <div class="panel-header">
+            <div class="panel-title">🐶 Puppy截图工坊</div>
+            <div class="panel-subtitle">让你的截图萌萌哒~</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">
+                <span>📸</span>
+                <span>截图操作</span>
+            </div>
+            <button class="puppy-btn" id="capture-full">🖥️ 全屏截图</button>
+            <button class="puppy-btn" id="capture-area">📋 区域截图</button>
+        </div>
+
+        <div class="section">
+            <div class="section-title">
+                <span>🎨</span>
+                <span>美化样式</span>
+            </div>
+            <div class="style-options">
+                <div class="option-card" data-style="cute">
+                    <div>🌸</div>
+                    <div>可爱风</div>
+                </div>
+                <div class="option-card selected" data-style="sweet">
+                    <div>🍭</div>
+                    <div>甜美风</div>
+                </div>
+                <div class="option-card" data-style="warm">
+                    <div>☀️</div>
+                    <div>温暖风</div>
+                </div>
+                <div class="option-card" data-style="fresh">
+                    <div>🌿</div>
+                    <div>清新风</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">
+                <span>🐾</span>
+                <span>Puppy特效</span>
+            </div>
+            <button class="puppy-btn" id="add-paw">添加爪印</button>
+            <button class="puppy-btn" id="add-heart">添加爱心</button>
+        </div>
+    </div>
+
+    <!-- 状态消息 -->
+    <div class="status-message" id="status-message"></div>
+
+    <script>
+        class PuppyScreenshot {
+            constructor() {
+                this.isOpen = false;
+                this.currentStyle = 'sweet';
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+            }
+
+            bindEvents() {
+                // 浮窗开关
+                document.getElementById('screenshot-btn').addEventListener('click', () => {
+                    this.togglePanel();
+                });
+
+                document.getElementById('close-panel').addEventListener('click', () => {
+                    this.closePanel();
+                });
+
+                // 截图功能
+                document.getElementById('capture-full').addEventListener('click', () => {
+                    this.captureFullScreen();
+                });
+
+                document.getElementById('capture-area').addEventListener('click', () => {
+                    this.captureArea();
+                });
+
+                // 样式选择
+                document.querySelectorAll('.option-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        this.selectStyle(card);
+                    });
+                });
+
+                // 特效按钮
+                document.getElementById('add-paw').addEventListener('click', () => {
+                    this.addPawEffect();
+                });
+
+                document.getElementById('add-heart').addEventListener('click', () => {
+                    this.addHeartEffect();
+                });
+            }
+
+            togglePanel() {
+                const panel = document.getElementById('screenshot-panel');
+                this.isOpen = !this.isOpen;
+                
+                if (this.isOpen) {
+                    panel.classList.add('active');
+                } else {
+                    panel.classList.remove('active');
+                }
+            }
+
+            closePanel() {
+                const panel = document.getElementById('screenshot-panel');
+                panel.classList.remove('active');
+                this.isOpen = false;
+            }
+
+            selectStyle(selectedCard) {
+                document.querySelectorAll('.option-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+                selectedCard.classList.add('selected');
+                this.currentStyle = selectedCard.dataset.style;
+                this.showMessage(`🐶 已选择${selectedCard.textContent.trim()}样式！`);
+            }
+
+            async captureFullScreen() {
+                try {
+                    this.showMessage('🐕 Puppy正在全屏截图...');
+                    this.closePanel();
+                    
+                    setTimeout(async () => {
+                        const canvas = await html2canvas(document.body, {
+                            height: window.innerHeight,
+                            width: window.innerWidth,
+                            scrollX: 0,
+                            scrollY: 0
+                        });
+                        
+                        this.processScreenshot(canvas);
+                    }, 500);
+                } catch (error) {
+                    this.showMessage('😢 截图失败了，小狗很难过...');
+                }
+            }
+
+            async captureArea() {
+                try {
+                    this.showMessage('🐾 请选择要截图的区域~');
+                    this.closePanel();
+                    
+                    setTimeout(async () => {
+                        const element = document.getElementById('demo-area');
+                        const canvas = await html2canvas(element);
+                        this.processScreenshot(canvas);
+                    }, 500);
+                } catch (error) {
+                    this.showMessage('😢 区域截图失败了...');
+                }
+            }
+
+            processScreenshot(canvas) {
+                // 应用选择的样式
+                this.applyStyle(canvas);
+                
+                // 下载截图
+                const link = document.createElement('a');
+                link.download = `puppy-screenshot-${Date.now()}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+                
+                this.showMessage('🎉 截图完成！小狗为你感到骄傲！');
+            }
+
+            applyStyle(canvas) {
+                const ctx = canvas.getContext('2d');
+                
+                // 根据选择的样式应用不同效果
+                switch (this.currentStyle) {
+                    case 'cute':
+                        this.applyCuteStyle(ctx, canvas);
+                        break;
+                    case 'sweet':
+                        this.applySweetStyle(ctx, canvas);
+                        break;
+                    case 'warm':
+                        this.applyWarmStyle(ctx, canvas);
+                        break;
+                    case 'fresh':
+                        this.applyFreshStyle(ctx, canvas);
+                        break;
+                }
+            }
+
+            applyCuteStyle(ctx, canvas) {
+                // 粉色边框
+                ctx.strokeStyle = '#FFB6C1';
+                ctx.lineWidth = 10;
+                ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
+            }
+
+            applySweetStyle(ctx, canvas) {
+                // 渐变边框
+                const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                gradient.addColorStop(0, '#FF69B4');
+                gradient.addColorStop(1, '#FFB6C1');
+                ctx.strokeStyle = gradient;
+                ctx.lineWidth = 8;
+                ctx.strokeRect(4, 4, canvas.width - 8, canvas.height - 8);
+            }
+
+            applyWarmStyle(ctx, canvas) {
+                // 橙色温暖边框
+                ctx.strokeStyle = '#FFA500';
+                ctx.lineWidth = 6;
+                ctx.strokeRect(3, 3, canvas.width - 6, canvas.height - 6);
+            }
+
+            applyFreshStyle(ctx, canvas) {
+                // 绿色清新边框
+                ctx.strokeStyle = '#98FB98';
+                ctx.lineWidth = 8;
+                ctx.strokeRect(4, 4, canvas.width - 8, canvas.height - 8);
+            }
+
+            addPawEffect() {
+                this.showMessage('🐾 添加了可爱的爪印效果！');
+                // 可以在这里添加爪印特效到页面
+            }
+
+            addHeartEffect() {
+                this.showMessage('❤️ 添加了爱心特效！');
+                // 可以在这里添加爱心特效到页面
+            }
+
+            showMessage(text) {
+                const messageEl = document.getElementById('status-message');
+                messageEl.textContent = text;
+                messageEl.classList.add('show');
+                
+                setTimeout(() => {
+                    messageEl.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            new PuppyScreenshot();
+        });
+    </script>
+</body>
+</html>

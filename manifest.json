@@ -1,0 +1,12 @@
+{
+  "name": "puppy-screenshot",
+  "title": "Puppy Screenshot",
+  "description": "SillyTavern Puppy系列：支持自定义截图、滤镜、美化和导出功能。",
+  "version": "1.0.0",
+  "author": "puppy",
+  "entry": "puppy_screenshot.js",
+  "backend": [
+    "puppy_api.py",
+    "puppy_plugin.py"
+  ]
+}

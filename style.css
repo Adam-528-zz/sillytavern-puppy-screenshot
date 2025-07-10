@@ -1,4 +1,4 @@
-/* Puppy Screenshot Pro - Ultimate CSS */
+/* Puppy Screenshot Pro - Smart UI CSS */
 
 /* 基础变量 */
 :root {
@@ -20,65 +20,28 @@
   --puppy-z-modal: 10002;
 }
 
-/* 快速入口按钮 - 右下角悬浮 */
-#puppy-quick-access {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: var(--puppy-z-high);
-  cursor: pointer;
-  transition: var(--puppy-transition);
-}
-
-.puppy-quick-btn {
-  background: linear-gradient(135deg, var(--puppy-primary), var(--puppy-accent));
-  color: white;
-  border-radius: 50px;
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: var(--puppy-shadow);
-  transition: var(--puppy-transition);
-  font-weight: 600;
-  font-size: 14px;
-  border: none;
-  outline: none;
-}
-
-.puppy-quick-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
-}
-
-.puppy-quick-btn:active {
-  transform: translateY(0);
-}
-
-.puppy-quick-icon {
-  font-size: 18px;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-}
-
-/* 主面板 */
-#puppy-main-panel {
+/* 智能面板基础样式 */
+#puppy-smart-panel {
   position: fixed;
   top: 20px;
   right: 20px;
+  z-index: var(--puppy-z-high);
+  transition: var(--puppy-transition);
+}
+
+.puppy-panel-container {
+  transition: var(--puppy-transition);
+}
+
+/* 完整面板状态 */
+.puppy-panel-full .puppy-state-full {
   width: 320px;
   background: var(--puppy-bg);
   border-radius: var(--puppy-radius);
   box-shadow: var(--puppy-shadow);
-  z-index: var(--puppy-z-high);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   overflow: hidden;
-  transition: var(--puppy-transition);
 }
 
 .puppy-panel-header {
@@ -122,6 +85,95 @@
   overflow-y: auto;
 }
 
+/* 横条状态 */
+.puppy-panel-minimized .puppy-state-minimized {
+  width: 280px;
+  background: var(--puppy-bg);
+  border-radius: 25px;
+  box-shadow: var(--puppy-shadow);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.puppy-minimized-bar {
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: move;
+}
+
+.puppy-minimized-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.puppy-minimized-title {
+  font-weight: 600;
+  color: var(--puppy-dark);
+}
+
+.puppy-minimized-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.puppy-minimized-controls {
+  display: flex;
+  gap: 5px;
+}
+
+/* 气泡状态 */
+.puppy-panel-bubble .puppy-state-bubble {
+  width: 60px;
+  height: 60px;
+}
+
+.puppy-bubble {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--puppy-primary), var(--puppy-accent));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--puppy-shadow);
+  transition: var(--puppy-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.puppy-bubble:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+.puppy-bubble-icon {
+  font-size: 24px;
+  z-index: 2;
+  position: relative;
+}
+
+.puppy-bubble-pulse {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--puppy-primary), var(--puppy-accent));
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+  opacity: 0.7;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.1); opacity: 0.3; }
+  100% { transform: scale(1); opacity: 0.7; }
+}
+
 /* 按钮样式 */
 .puppy-btn {
   border: none;
@@ -159,6 +211,22 @@
   background: rgba(99, 110, 114, 0.2);
 }
 
+.puppy-btn-control {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 50%;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.puppy-btn-control:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 .puppy-btn-close {
   background: rgba(255, 255, 255, 0.2);
   color: white;
@@ -175,20 +243,25 @@
   background: rgba(255, 255, 255, 0.3);
 }
 
-.puppy-btn-minimize {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  width: 30px;
-  height: 30px;
+.puppy-btn-mini {
+  background: rgba(255, 107, 157, 0.1);
+  color: var(--puppy-primary);
+  border: 1px solid rgba(255, 107, 157, 0.2);
+  width: 28px;
+  height: 28px;
   padding: 0;
   border-radius: 50%;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  font-size: 18px;
-  line-height: 1;
+  font-size: 12px;
+  cursor: pointer;
+  transition: var(--puppy-transition);
 }
 
-.puppy-btn-minimize:hover {
-  background: rgba(255, 255, 255, 0.3);
+.puppy-btn-mini:hover {
+  background: rgba(255, 107, 157, 0.2);
+  transform: scale(1.1);
 }
 
 /* 部分样式 */
@@ -244,24 +317,15 @@
   box-shadow: 0 0 0 2px rgba(255, 107, 157, 0.3);
 }
 
-/* 消息中的相机图标 */
+/* 增强的相机图标 */
 .puppy-camera-icon {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 24px;
-  height: 24px;
-  background: rgba(255, 107, 157, 0.9);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  cursor: pointer;
-  transition: var(--puppy-transition);
+  top: 5px;
+  right: 5px;
   z-index: 1000;
   opacity: 0;
   transform: scale(0.8);
+  transition: var(--puppy-transition);
 }
 
 .mes:hover .puppy-camera-icon {
@@ -269,9 +333,64 @@
   transform: scale(1);
 }
 
-.puppy-camera-icon:hover {
-  background: var(--puppy-primary);
+/* 移动端始终显示相机图标 */
+.puppy-camera-icon.mobile-visible {
+  opacity: 0.7;
+  transform: scale(0.9);
+}
+
+.puppy-camera-icon.mobile-visible:active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.puppy-camera-button {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--puppy-primary), var(--puppy-accent));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--puppy-transition);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.puppy-camera-button:hover {
   transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3);
+}
+
+.puppy-camera-button:active {
+  transform: scale(0.95);
+}
+
+.puppy-camera-symbol {
+  font-size: 14px;
+  color: white;
+}
+
+.puppy-camera-tooltip {
+  position: absolute;
+  top: -35px;
+  right: 0;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(5px);
+  transition: var(--puppy-transition);
+  pointer-events: none;
+}
+
+.puppy-camera-button:hover .puppy-camera-tooltip {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* 截图预览 */
@@ -579,19 +698,19 @@
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-  #puppy-main-panel {
-    width: 95%;
-    right: 2.5%;
+  #puppy-smart-panel {
     top: 10px;
+    right: 10px;
   }
   
-  .puppy-quick-btn {
-    padding: 10px 16px;
-    font-size: 12px;
+  .puppy-panel-full .puppy-state-full {
+    width: 95vw;
+    max-width: 320px;
   }
   
-  .puppy-quick-icon {
-    font-size: 16px;
+  .puppy-panel-minimized .puppy-state-minimized {
+    width: 95vw;
+    max-width: 280px;
   }
   
   .puppy-preview-container,
@@ -610,22 +729,65 @@
   }
 }
 
+/* 移动端菜单 */
+.puppy-mobile-menu-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: var(--puppy-z-modal);
+  backdrop-filter: blur(2px);
+}
+
+.puppy-mobile-menu {
+  position: fixed;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  z-index: calc(var(--puppy-z-modal) + 1);
+  overflow: hidden;
+  animation: mobileMenuIn 0.2s ease-out;
+}
+
+@keyframes mobileMenuIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.puppy-mobile-menu-item {
+  padding: 15px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 16px;
+  color: var(--puppy-dark);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.puppy-mobile-menu-item:last-child {
+  border-bottom: none;
+}
+
+.puppy-mobile-menu-item:hover {
+  background: rgba(255, 107, 157, 0.1);
+}
+
+.puppy-mobile-menu-item:active {
+  background: rgba(255, 107, 157, 0.2);
+}
+
 /* 移动端优化 */
 @media (max-width: 480px) {
-  #puppy-quick-access {
-    bottom: 15px;
-    right: 15px;
-  }
-  
-  .puppy-quick-text {
-    display: none;
-  }
-  
-  .puppy-quick-btn {
-    padding: 12px;
-    border-radius: 50%;
-  }
-  
   .puppy-panel-content {
     padding: 15px;
   }
@@ -634,9 +796,27 @@
     grid-template-columns: repeat(3, 1fr);
   }
   
-  .puppy-camera-icon {
-    width: 20px;
-    height: 20px;
-    font-size: 10px;
+  .puppy-camera-button {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .puppy-camera-symbol {
+    font-size: 12px;
+  }
+  
+  .puppy-minimized-actions {
+    display: none;
+  }
+  
+  /* 移动端相机图标更明显 */
+  .puppy-camera-icon.mobile-visible {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  
+  .puppy-camera-icon.mobile-visible .puppy-camera-button {
+    background: linear-gradient(135deg, var(--puppy-primary), var(--puppy-accent));
+    box-shadow: 0 2px 8px rgba(255, 107, 157, 0.4);
   }
 }
